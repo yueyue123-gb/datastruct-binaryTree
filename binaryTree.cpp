@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <stack>
 using namespace std;
 
 struct TreeNode
@@ -15,7 +15,7 @@ struct TreeNode
     }
 };
 
-TreeNode *CreateTree(string input, int &index)
+TreeNode *CreateTree(string input, int &index)  // middle build
 {
     if (index >= input.size())
     {
@@ -34,21 +34,104 @@ TreeNode *CreateTree(string input, int &index)
     return root;
 }
 
-void TravelTree(TreeNode* root){
-    if(root == nullptr){
+void TravelTreeMid(TreeNode *root)
+{
+    if (root == nullptr)
+    {
         // cout << "# ";
         return;
     }
-    TravelTree(root->left);
+    TravelTreeMid(root->left);
     cout << root->val << " ";
-    TravelTree(root->right);
+    TravelTreeMid(root->right);
+}
+
+void TravelTreeFront(TreeNode *root)
+{
+    if (root == nullptr)
+    {
+        // cout << "# ";
+        return;
+    }
+    cout << root->val << " ";
+    TravelTreeFront(root->left);
+    TravelTreeFront(root->right);
+}
+
+void TravelTreeBack(TreeNode *root)
+{
+    if (root == nullptr)
+    {
+        // cout << "# ";
+        return;
+    }
+    TravelTreeBack(root->left);
+    TravelTreeBack(root->right);
+    cout << root->val << " ";
+}
+
+void CycleTravelMid(TreeNode *root)
+{
+    stack<TreeNode *> nodeStack;
+    while (!nodeStack.empty() || root != nullptr)
+    {
+        while (root != nullptr)
+        {
+            nodeStack.push(root);
+            root = root->left;
+        }
+        root = nodeStack.top();
+        nodeStack.pop();
+        cout << root->val << " ";
+        root = root->right;
+    }
+}
+
+void CycleTravelFront(TreeNode *root)
+{
+    stack<TreeNode *> nodeStack;
+    while (!nodeStack.empty() || root != nullptr)
+    {
+        while (root != nullptr)
+        {
+            cout << root->val << " ";
+            nodeStack.push(root);
+            root = root->left;
+        }
+        root = nodeStack.top();
+        nodeStack.pop();
+        root = root->right;
+    }
+}
+
+void CyecleTravelBack(TreeNode* root){
+    stack<TreeNode*> nodeStack;
+    TreeNode* tagNode = nullptr;
+    while(!nodeStack.empty() || root != nullptr){
+        while(root != nullptr){
+            nodeStack.push(root);
+            root = root ->left;
+        }
+        root = nodeStack.top();
+        if (root->right == nullptr || root->right == tagNode){
+            cout << root->val << " ";
+            nodeStack.pop();        
+            tagNode = root;
+            root = nullptr;
+        } else {
+            root = root->right;
+        }
+    }
 }
 
 int main()
 {
-    string input = "ab#d##c##";
+    string input = "51##43##6##";
+    string input2 = "ABDH#K###E##CFI###G#J##";
     int index = 0;
-    TreeNode* root = CreateTree(input, index);
-    TravelTree(root);
+    TreeNode *root = CreateTree(input2, index);
+    TravelTreeBack(root);
+    cout << endl;
+    CyecleTravelBack(root);
     return 0;
 }
